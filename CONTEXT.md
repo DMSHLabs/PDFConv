@@ -11,8 +11,8 @@
 ## 1. Что делать в первую очередь на новой машине
 
 ```cmd
-py -3 src\bootstrap.py --install   :: проверка + установка python-зависимостей в lib\
-py -3 src\selfcheck.py             :: полная проверка: окружение + пробная конвертация + файлы
+py -3.14 src\bootstrap.py --install   :: проверка + установка python-зависимостей в lib\
+py -3.14 src\selfcheck.py             :: полная проверка: окружение + пробная конвертация + файлы
 ```
 
 Ожидаемый результат при здоровом окружении: восемь строк `OK` в разделе окружения, PDF на 1
@@ -27,7 +27,7 @@ py -3 src\selfcheck.py             :: полная проверка: окруж�
 Прочитай AGENTS.md, CONTEXT.md и HANDOFF.md — там всё устройство проекта, инварианты
 и известные проблемы с лечением. Затем выполни проверку:
 
-    py -3 src\selfcheck.py
+    py -3.14 src\selfcheck.py
 
 Ожидаемый результат: восемь строк OK в окружении, PDF с ищущимся текстом, DOCX с формулами,
 все файлы на месте, код возврата 0. Если что-то не так — определи причину по разделу
@@ -49,8 +49,8 @@ py -3 src\selfcheck.py             :: полная проверка: окруж�
 | Strawberry Perl (portable) | в MiKTeX 26.5+ `latexmk` — Perl-скрипт, а интерпретатор Perl в дистрибутив MiKTeX не входит (см. «Известные проблемы», п. 13). **Вендорится в `bin\perl`** (`perl\bin` + `perl\lib` из portable-архива, ~75 МБ; обновление — заменить каталог); PATH и `C:\Tools\strawberry-perl` — запасные варианты | в папке проекта |
 | Шрифты Times New Roman, Consolas | основной текст и `\texttt` | да |
 | Microsoft YaHei | китайский/японский текст | только для CJK |
-| Python 3.10+ x64 (на этой машине 3.15.2 — `py -3` по умолчанию; именно под неё собран `lib\`) | запуск `pdfconv.cmd`, CLI, тесты, пересборка exe | нет: exe работает без Python |
-| PyInstaller 6.22.3 | только пересборка exe: `py -3 -m pip install pyinstaller` | нет |
+| Python 3.10+ x64 (на этой машине 3.14.10 — `py -3.14`; именно под неё собран `lib\`) | запуск `pdfconv.cmd`, CLI, тесты, пересборка exe | нет: exe работает без Python |
+| PyInstaller 6.22.3 | только пересборка exe: `py -3.14 -m pip install pyinstaller` | нет |
 | pandoc 3.11 | вендорен в `bin\pandoc\pandoc.exe` | да для `.md` и DOCX |
 
 Python ставить с python.org (не из Microsoft Store): нужны `tkinter` (входит в установщик),
@@ -88,7 +88,7 @@ src\                 весь код:
   check_gui.py       тест окна без показа (18 проверок)
   selfcheck.py       полная самопроверка проекта (эта команда из п.1)
   bootstrap.py       подготовка новой машины: проверка/установка зависимостей в lib\
-  bootstrap.cmd      запуск bootstrap.py через py -3
+  bootstrap.cmd      запуск bootstrap.py через py -3.14
   make_icon.py       рисует res\PDFConv.ico (Pillow)
   make_mathtype_translator.py  генерирует транслятор MathType с кириллицей
   build-exe.cmd      пересборка PDFConv.exe (PyInstaller)
@@ -211,7 +211,7 @@ description»).
 | Автоустановка MiKTeX | `[MPM]AutoInstall` = 1 | MiKTeX Console → Settings → on-the-fly = Yes |
 | Посторонние файлы MiKTeX | MiKTeX ничего лишнего в рабочем каталоге не создаёт | см. «Известные проблемы», п. 3 |
 | Пробная сборка LaTeX | **реально собираются** тестовые документы pdflatex и xelatex, а в собранном PDF проверяется, что кириллица ищется (иначе — «PDF собрался, но кириллица в нём не ищется») | см. п. 1, 2 и 13 |
-| Перетаскивание (tkinterdnd2) | библиотека подключилась | для exe не актуально; для Python-запуска `py -3 -m pip install --target lib tkinterdnd2` |
+| Перетаскивание (tkinterdnd2) | библиотека подключилась | для exe не актуально; для Python-запуска `py -3.14 -m pip install --target lib tkinterdnd2` |
 | Проверка PDF (pymupdf/pdfminer/pypdf) | проверка готового PDF доступна; в заголовке видно, каким бэкендом | необязательно; `pip install --target lib pymupdf` (или `pdfminer.six`, или `pypdf`) |
 
 Проверки идут в отдельном потоке (пробная сборка занимает секунды), а кнопка «Проверить окружение
@@ -249,20 +249,20 @@ description»).
 :: запуск
 PDFConv.exe                                  :: без Python
 pdfconv.cmd                                  :: через Python
-pyw -3 src\pdfconv.pyw файл.md файл.tex      :: окно сразу с файлами
+pyw -3.14 src\pdfconv.pyw файл.md файл.tex      :: окно сразу с файлами
 
 :: проверки
-py -3 src\selfcheck.py                       :: всё сразу (окружение + конвертация + файлы)
-py -3 src\convert.py --check                 :: только окружение, текстом
-py -3 src\check_gui.py                       :: логика окна без показа (18 проверок)
+py -3.14 src\selfcheck.py                       :: всё сразу (окружение + конвертация + файлы)
+py -3.14 src\convert.py --check                 :: только окружение, текстом
+py -3.14 src\check_gui.py                       :: логика окна без показа (18 проверок)
 
 :: конвертация без окна
-py -3 src\convert.py файл.md файл.tex                 :: оба формата
-py -3 src\convert.py --formats docx файл.md           :: только DOCX
-py -3 src\convert.py --formats pdf файл.md            :: только PDF
+py -3.14 src\convert.py файл.md файл.tex                 :: оба формата
+py -3.14 src\convert.py --formats docx файл.md           :: только DOCX
+py -3.14 src\convert.py --formats pdf файл.md            :: только PDF
 
 :: пересборка
-py -3 src\make_icon.py                       :: нарисовать иконку в res\PDFConv.ico
+py -3.14 src\make_icon.py                       :: нарисовать иконку в res\PDFConv.ico
 src\build-exe.cmd                            :: собрать PDFConv.exe
 ```
 
@@ -289,7 +289,7 @@ src\build-exe.cmd                            :: собрать PDFConv.exe
    испорчена или обновление не завершилось (типично — обновление без прав администратора: в
    `miktex-console_admin.log` видны «Отказано в доступе» на DLL в `C:\Program Files\MiKTeX`).
    Лечение: MiKTeX Console **от имени администратора** → Updates → Update now, либо переустановка
-   MiKTeX. Диагностика: `py -3 src\convert.py --check` — строка «Пробная сборка LaTeX».
+   MiKTeX. Диагностика: `py -3.14 src\convert.py --check` — строка «Пробная сборка LaTeX».
 2. **Проверка окружения зелёная, а сборка падает.** Причина: проверка файлов ≠ работоспособность
    (пример из п. 1: `latexmk.exe` на месте, движок не запускается). Поэтому в проверке есть
    пробная сборка; она и покажет реальную причину выводом `latexmk`.
@@ -376,7 +376,7 @@ src\build-exe.cmd                            :: собрать PDFConv.exe
     в текст (Convert Equations → транслятор) MathType падает на первой кириллической букве
     («No translation available for 0x043D» — это «н» из Р_накр) и в пакетном режиме
     выбрасывает всю формулу, оставляя только её номер. Лечение: транслятор с кириллицей
-    (`py -3 src\make_mathtype_translator.py`, файл скопировать в `Translators\`), тогда
+    (`py -3.14 src\make_mathtype_translator.py`, файл скопировать в `Translators\`), тогда
     формулы переводятся с индексами вида `\text{накр}`. Конвертер страхует: одинокий номер
     формулы без формулы даёт предупреждение в журнале — по нему потери находят и
     допереводят вручную (в MathType: открыть формулу, Ctrl+A, Ctrl+C при настроенном
@@ -427,12 +427,12 @@ src\build-exe.cmd                            :: собрать PDFConv.exe
     `PermissionError` из Python.
 22. **«Проверка PDF» недоступна или падает на pdfminer.** Причина: `pdfminer.six` импортирует
     `cryptography` (Rust-биндинг), а бинарные пакеты в `lib\` собраны под конкретный интерпретатор:
-    проект на этой машине запускается под Python 3.15 (`py -3`), и колёса `lib` стоят под неё
-    (charset-normalizer/cffi — cp315, cryptography — cp315-abi3). Запуск тем же кодом под 3.14
-    даёт «ImportError: DLL load failed while importing _rust» на pdfminer — лестница
-    `pdf_document_text()` мягко откатывается на следующий бэкенд (`pymupdf` → `pdfminer` →
+    проект закреплён за Python 3.14 (`py -3.14`), и колёса `lib` стоят под неё
+    (charset-normalizer/cffi — cp314, cryptography — cp311-abi3). Запуск тем же кодом под 3.15
+    (`py -3` по умолчанию) даёт «ImportError: DLL load failed while importing _rust» на pdfminer —
+    лестница `pdf_document_text()` мягко откатывается на следующий бэкенд (`pymupdf` → `pdfminer` →
     `pypdf`). Лечение: переустановить `lib` тем же Python:
-    `py -3 -m pip install --target lib pdfminer.six pypdf`. Проверено на 3.15: все три бэкенда
+    `py -3.14 -m pip install --target lib -r requirements.txt`. Проверено на 3.14: все три бэкенда
     извлекают кириллицу и искомое слово из PDF конвейера, отчёт окружения показывает активный
     бэкенд, а при отсутствии всех — честную строку «не установлена» вместо падения.
 

@@ -14,8 +14,8 @@ Tk, которое превращает перетащенные `.md`/`.tex` ф
 ## Первым делом на новой машине
 
 ```cmd
-py -3 src\bootstrap.py --install  :: проверить/поставить python-зависимости в lib\
-py -3 src\selfcheck.py            :: окружение + пробная конвертация + файлы, код возврата 0 = всё хорошо
+py -3.14 src\bootstrap.py --install  :: проверить/поставить python-зависимости в lib\
+py -3.14 src\selfcheck.py            :: окружение + пробная конвертация + файлы, код возврата 0 = всё хорошо
 ```
 
 Без Python: запустить `PDFConv.exe` и посмотреть «Журнал». Если нужно не изучать проект, а знать
@@ -43,7 +43,7 @@ py -3 src\selfcheck.py            :: окружение + пробная кон�
 | `README.md` | описание для пользователя: запуск, восстановление зависимостей, что чинит конвейер |
 | `LICENSE` | полный текст GNU GPL v3; проект — GPL-3.0-or-later |
 | `THIRD-PARTY.md` | сторонние компоненты и их лицензии (pandoc, Perl, tkinterdnd2, PyMuPDF, pdfminer, pypdf и зависимости) |
-| `requirements.txt` | закреплённые python-зависимости; ставятся в `lib/` командой `py -3 -m pip install --target lib -r requirements.txt` |
+| `requirements.txt` | закреплённые python-зависимости; ставятся в `lib/` командой `py -3.14 -m pip install --target lib -r requirements.txt` |
 | `src/bootstrap.py` / `src/bootstrap.cmd` | подготовка новой машины: проверка и установка зависимостей в `lib/` |
 | `.gitignore` | `bin/`, `lib/`, exe, `build/`, `pdfconv.json`, `_work/`, `.zcode-share/`, `res/*.tdl` |
 
@@ -75,14 +75,18 @@ Microsoft YaHei). Perl для `latexmk` (с MiKTeX 26.5 `latexmk` — это Per
   распаковывает бандл, поэтому корень проекта берётся от `sys.executable` (иначе `bin/pandoc`
   и `pdfconv.json` искались бы внутри временной распаковки), а `lib` в `sys.path` при
   `sys.frozen` не подставляется — зависимости уже внутри, лишний путь только ломает импорты.
-- **Сборка exe (`src\build-exe.cmd`).** Три вещи, без которых сборка молча ломается:
-  `--paths lib` (иначе `tkinterdnd2` и `pymupdf` не попадают в exe: выходит 12 МБ вместо 32,
-  без перетаскивания и проверки PDF), **абсолютные пути** к иконке и скрипту (с `--specpath`
-  относительные считаются от каталога `build`, и сборка падает, оставив битый exe) и
-  `--exclude-module pyarrow/numpy/pandas/PIL` (иначе `--collect-all pymupdf` затягивает
-  необязательные зависимости из глобального Python, если они там стоят: 85 МБ вместо 32),
-  а также pdfminer/pypdf/cryptography/cffi/charset-normalizer/pycparser (иначе в exe попадают
-  новые бэкенды проверки PDF и его размер растёт до ~44 МБ).
+- **Сборка exe (`src\build-exe.cmd`).** Вещи, без которых сборка молча ломается:
+  `--paths lib` (иначе `tkinterdnd2` и `pymupdf` не попадают в exe: выходит 12 МБ вместо 32),
+  **абсолютные пути** к иконке и скрипту (с `--specpath` относительные считаются от каталога
+  `build`, и сборка падает, оставив битый exe), `--collect-all tkinterdnd2` (Tcl-данные
+  перетаскивания — не модули), а также
+  `--exclude-module pyarrow/numpy/pandas/PIL/lxml` (иначе `--collect-all`-подобные механизмы
+  затягивают необязательные зависимости из глобального Python) и
+  pdfminer/pypdf/cryptography/cffi/charset-normalizer/pycparser (в exe не нужны — их тянет
+  PyInstaller из-за ленивых импортов в `convert.py`).
+  **`--collect-all pymupdf` больше не используется**: под 3.14 он собирает `pymupdf\mupdf-devel`
+  (заголовки/.lib) и дублирует `mupdfcpp64.dll`, раздувая exe до ~54 МБ; DLL-ки pymupdf
+  попадают через анализ зависимостей `_mupdf.pyd` (проверено: `--check` в exe зелёный).
   Версию PyInstaller не менять без причины; сборка воспроизводится `src\build-exe.cmd`.
 - **Тексты для пользователя — на русском**, имена в коде — английские. Комментарии только
   там, где неочевидна причина («почему», а не «что»).
@@ -92,12 +96,12 @@ Microsoft YaHei). Perl для `latexmk` (с MiKTeX 26.5 `latexmk` — это Per
 
 ## Как проверять изменения
 
-1. `py -3 src\convert.py --check` — окружение: pandoc, MiKTeX, пакеты LaTeX, tkinterdnd2,
+1. `py -3.14 src\convert.py --check` — окружение: pandoc, MiKTeX, пакеты LaTeX, tkinterdnd2,
    проверка PDF (каким бэкендом — видно в заголовке строки).
-2. `py -3 src\convert.py [--formats pdf,docx] файл.md файл.tex` — CLI-путь; в конце печатаются
+2. `py -3.14 src\convert.py [--formats pdf,docx] файл.md файл.tex` — CLI-путь; в конце печатаются
    три итоговые строки (без ошибок / с предупреждениями / с ошибками).
 3. Окно: `pdfconv.cmd`. Логику окна (галочки, защита от пустого выбора) проверяет
-   `py -3 src\check_gui.py` — окно создаётся и сразу закрывается, код возврата 1 при провале.
+   `py -3.14 src\check_gui.py` — окно создаётся и сразу закрывается, код возврата 1 при провале.
 4. DOCX проверяется без Word: это zip, текст/формулы/таблицы читаются из
    `word/document.xml` (`<w:t>`, `<m:oMath`, `<w:tbl>`).
 5. PDF проверяется первым доступным бэкендом (`pdf_document_text`: pymupdf → pdfminer →
