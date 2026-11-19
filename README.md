@@ -22,13 +22,13 @@ python-зависимости.
   и DOCX) и на машине должны быть установлены MiKTeX и Perl (для PDF, см. «Что внутри»). Из-за
   распаковки во временную папку стартует около трёх секунд.
 - `pdfconv.cmd` — тот же конвертер, но через установленный Python (стартует быстрее).
-- `pyw -3.14 src\pdfconv.pyw отчёт.md статья.tex` — окно сразу с готовым списком файлов.
-- `py -3.14 src\convert.py --check` — текстовый отчёт об окружении.
-- `py -3.14 src\convert.py [--formats pdf,docx] файл.md файл.tex` — конвертация без окна.
+- `C:\Tools\Scripts\Python314\pythonw.exe src\pdfconv.pyw отчёт.md статья.tex` — окно сразу с готовым списком файлов.
+- `C:\Tools\Scripts\Python314\python.exe src\convert.py --check` — текстовый отчёт об окружении.
+- `C:\Tools\Scripts\Python314\python.exe src\convert.py [--formats pdf,docx] файл.md файл.tex` — конвертация без окна.
   По умолчанию оба формата; `--formats pdf` или `--formats docx` — только нужный.
-- `py -3.14 src\check_gui.py` — быстрая проверка окна без показа (вкладки, галочки, защита
+- `C:\Tools\Scripts\Python314\python.exe src\check_gui.py` — быстрая проверка окна без показа (вкладки, галочки, защита
   от пустого выбора).
-- `src\build-exe.cmd` — пересобрать `PDFConv.exe` (нужен `py -3.14 -m pip install pyinstaller`).
+- `src\build-exe.cmd` — пересобрать `PDFConv.exe` (нужен `C:\Tools\Scripts\Python314\python.exe -m pip install pyinstaller`).
 
 Окно запоминает свой размер: растянули — при следующем запуске откроется таким же (в `pdfconv.json`).
 
@@ -44,7 +44,7 @@ python-зависимости.
 Для работы с научным текстом удобно отдавать его в `.md` с формулами LaTeX. Маршрут для
 документов, где формулы набраны MathType:
 
-1. **Один раз** сгенерировать транслятор с кириллицей: `py -3.14 src\make_mathtype_translator.py` —
+1. **Один раз** сгенерировать транслятор с кириллицей: `C:\Tools\Scripts\Python314\python.exe src\make_mathtype_translator.py` —
    файл появится в `res\LaTeX Cyrillic.tdl` (охват: весь блок Ѐ–џ и Ґ/ґ; четыре редкие буквы,
    которых нет в русской Windows-кодировке, выводятся LaTeX-акцентами). Скопируйте его в
    `C:\Program Files (x86)\MathType\Translators\` (нужны права администратора). Штатный
@@ -65,8 +65,8 @@ python-зависимости.
 ## Проверка и перенос на другую машину
 
 ```cmd
-py -3.14 src\bootstrap.py --install   :: проверить/поставить зависимости в lib\ + подсказки
-py -3.14 src\selfcheck.py            :: окружение + пробная конвертация + наличие файлов
+C:\Tools\Scripts\Python314\python.exe src\bootstrap.py --install   :: проверить/поставить зависимости в lib\ + подсказки
+C:\Tools\Scripts\Python314\python.exe src\selfcheck.py            :: окружение + пробная конвертация + наличие файлов
 ```
 
 `bootstrap.py` без `--install` только проверяет и подсказывает, что скачать (pandoc, Perl,
@@ -76,8 +76,8 @@ MiKTeX); с `--install` сам ставит python-зависимости из `
 Папку можно копировать целиком: pandoc, зависимости и иконка лежат внутри. На новой машине нужны
 только MiKTeX и Perl для него (см. «Что внутри»), а если хочется запускать через Python или
 пересобирать exe — ещё Python 3.10+ x64 с python.org. На этой машине проект **закреплён за
-Python 3.14** (`py -3.14`, `pyw -3.14`; в примерах ниже команды уже с этой версией), и зависимости
-в `lib/` собраны под тот же интерпретатор. `py -3` по умолчанию даёт 3.15 — в этом случае
+Python 3.14** (`C:\Tools\Scripts\Python314\python.exe`, `C:\Tools\Scripts\Python314\pythonw.exe`; в примерах ниже команды уже с этой версией), и зависимости
+в `lib/` собраны под тот же интерпретатор. Лаунчер `py -3` по умолчанию даёт 3.15 — **для проекта не использовать**: в этом случае
 проверка PDF откатывается на pypdf (pymupdf работает в обеих версиях). Сам `PDFConv.exe`
 в Python не нуждается. Полное описание проекта, всех проверок и известных проблем — в `CONTEXT.md`.
 
@@ -139,8 +139,8 @@ alt-текст картинки — это только подпись, номе
 перекачиваются. Восстановить python-зависимости (любым способом):
 
 ```
-py -3.14 -m pip install --target "D:\Projects\PDFConv\lib" -r requirements.txt
-py -3.14 src\bootstrap.py --install        :: то же + проверка, чего не хватает
+C:\Tools\Scripts\Python314\python.exe -m pip install --target "D:\Projects\PDFConv\lib" -r requirements.txt
+C:\Tools\Scripts\Python314\python.exe src\bootstrap.py --install        :: то же + проверка, чего не хватает
 ```
 
 (путь — если папка переехала, подставьте новый). Проверка PDF работает с любым из трёх бэкендов:

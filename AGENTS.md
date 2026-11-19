@@ -14,8 +14,8 @@ Tk, которое превращает перетащенные `.md`/`.tex` ф
 ## Первым делом на новой машине
 
 ```cmd
-py -3.14 src\bootstrap.py --install  :: проверить/поставить python-зависимости в lib\
-py -3.14 src\selfcheck.py            :: окружение + пробная конвертация + файлы, код возврата 0 = всё хорошо
+C:\Tools\Scripts\Python314\python.exe src\bootstrap.py --install  :: проверить/поставить python-зависимости в lib\
+C:\Tools\Scripts\Python314\python.exe src\selfcheck.py            :: окружение + пробная конвертация + файлы, код возврата 0 = всё хорошо
 ```
 
 Без Python: запустить `PDFConv.exe` и посмотреть «Журнал». Если нужно не изучать проект, а знать
@@ -43,7 +43,7 @@ py -3.14 src\selfcheck.py            :: окружение + пробная ко
 | `README.md` | описание для пользователя: запуск, восстановление зависимостей, что чинит конвейер |
 | `LICENSE` | полный текст GNU GPL v3; проект — GPL-3.0-or-later |
 | `THIRD-PARTY.md` | сторонние компоненты и их лицензии (pandoc, Perl, tkinterdnd2, PyMuPDF, pdfminer, pypdf и зависимости) |
-| `requirements.txt` | закреплённые python-зависимости; ставятся в `lib/` командой `py -3.14 -m pip install --target lib -r requirements.txt` |
+| `requirements.txt` | закреплённые python-зависимости; ставятся в `lib/` командой `C:\Tools\Scripts\Python314\python.exe -m pip install --target lib -r requirements.txt` |
 | `src/bootstrap.py` / `src/bootstrap.cmd` | подготовка новой машины: проверка и установка зависимостей в `lib/` |
 | `.gitignore` | `bin/`, `lib/`, exe, `build/`, `pdfconv.json`, `_work/`, `.zcode-share/`, `res/*.tdl` |
 
@@ -96,12 +96,12 @@ Microsoft YaHei). Perl для `latexmk` (с MiKTeX 26.5 `latexmk` — это Per
 
 ## Как проверять изменения
 
-1. `py -3.14 src\convert.py --check` — окружение: pandoc, MiKTeX, пакеты LaTeX, tkinterdnd2,
+1. `C:\Tools\Scripts\Python314\python.exe src\convert.py --check` — окружение: pandoc, MiKTeX, пакеты LaTeX, tkinterdnd2,
    проверка PDF (каким бэкендом — видно в заголовке строки).
-2. `py -3.14 src\convert.py [--formats pdf,docx] файл.md файл.tex` — CLI-путь; в конце печатаются
+2. `C:\Tools\Scripts\Python314\python.exe src\convert.py [--formats pdf,docx] файл.md файл.tex` — CLI-путь; в конце печатаются
    три итоговые строки (без ошибок / с предупреждениями / с ошибками).
 3. Окно: `pdfconv.cmd`. Логику окна (галочки, защита от пустого выбора) проверяет
-   `py -3.14 src\check_gui.py` — окно создаётся и сразу закрывается, код возврата 1 при провале.
+   `C:\Tools\Scripts\Python314\python.exe src\check_gui.py` — окно создаётся и сразу закрывается, код возврата 1 при провале.
 4. DOCX проверяется без Word: это zip, текст/формулы/таблицы читаются из
    `word/document.xml` (`<w:t>`, `<m:oMath`, `<w:tbl>`).
 5. PDF проверяется первым доступным бэкендом (`pdf_document_text`: pymupdf → pdfminer →

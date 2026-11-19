@@ -1,6 +1,6 @@
 # Python-зависимости приложения. Ставить в lib/, а не в глобальный Python:
-#   py -3.14 -m pip install --target lib -r requirements.txt
-# (или: py -3.14 src\bootstrap.py --install — тот же эффект с проверкой)
+#   C:\Tools\Scripts\Python314\python.exe -m pip install --target lib -r requirements.txt
+# (или: C:\Tools\Scripts\Python314\python.exe src\bootstrap.py --install — тот же эффект с проверкой)
 # Версии — те, на которых проект проверен; конвейер работает и без pymupdf
 # (тогда проверка PDF идёт через pdfminer/pypdf).
 tkinterdnd2==0.6.3

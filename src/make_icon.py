@@ -1,6 +1,6 @@
 """Нарисовать icon.ico для программы: страница документа и стрелка преобразования.
 
-Запуск: py -3 make_icon.py
+Запуск: C:\\Tools\\Scripts\\Python314\\python.exe make_icon.py
 Рисуем в 256 px и уменьшаем до остальных размеров — так края остаются гладкими.
 """
 from pathlib import Path

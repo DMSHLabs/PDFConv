@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Нарисовать транслятор MathType с поддержкой кириллицы: "LaTeX Cyrillic.tdl".
 
-Запуск: py -3 src/make_mathtype_translator.py [путь-для-файла]
+Запуск: C:\\Tools\\Scripts\\Python314\\python.exe src/make_mathtype_translator.py [путь-для-файла]
 По умолчанию файл кладётся в res\\ (рядом с иконкой, как у make_icon.py); его нужно
 скопировать в папку Translators установки MathType
 (C:\\Program Files (x86)\\MathType\\Translators\\) — нужны права администратора.

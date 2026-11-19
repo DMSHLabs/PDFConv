@@ -373,7 +373,7 @@ def check_environment() -> list[Dependency]:
         title="Перетаскивание файлов (tkinterdnd2)",
         ok=dnd_ok,
         detail=dnd_detail,
-        fix="" if dnd_ok else "py -3 -m pip install --target \"%s\" tkinterdnd2" % LIB_DIR,
+        fix="" if dnd_ok else "C:\\Tools\\Scripts\\Python314\\python.exe -m pip install --target \"%s\" tkinterdnd2" % LIB_DIR,
         url="" if dnd_ok else DND_URL,
         required=False,
     ))
@@ -391,7 +391,7 @@ def check_environment() -> list[Dependency]:
         title="Проверка PDF (%s)" % (pdf_backend or "pymupdf/pdfminer/pypdf"),
         ok=pdf_ok,
         detail=pdf_detail,
-        fix="" if pdf_ok else "py -3 -m pip install --target \"%s\" pypdf" % LIB_DIR,
+        fix="" if pdf_ok else "C:\\Tools\\Scripts\\Python314\\python.exe -m pip install --target \"%s\" pypdf" % LIB_DIR,
         url="" if pdf_ok else "https://pypi.org/project/pypdf/",
         required=False,
     ))
@@ -1425,6 +1425,18 @@ def docx_media_dir(stem: str) -> str:
     return re.sub(r"\s+", "_", stem) + ".media"
 
 
+def count_omml_formulas(docx_path: Path) -> int:
+    """Сколько формул Word (OMML, `<m:oMath`) в исходном DOCX."""
+    import zipfile
+
+    try:
+        with zipfile.ZipFile(docx_path) as archive:
+            document = archive.read("word/document.xml").decode("utf-8", "replace")
+    except (OSError, KeyError, zipfile.BadZipFile):
+        return 0
+    return document.count("<m:oMath")
+
+
 def build_markdown_from_docx(source: Path, output_md: Path, result: Result) -> None:
     """DOCX -> Markdown с восстановлением формул; картинки уходят в <имя>.media."""
     pandoc = resolve_tool("pandoc")
@@ -1476,10 +1488,15 @@ def build_markdown_from_docx(source: Path, output_md: Path, result: Result) -> N
     result.md = output_md
 
     media_root = output_md.parent / media_dir
-    images = len(list(media_root.rglob("*"))) if media_root.is_dir() else 0
-    note = "DOCX: формул восстановлено — %d" % restored
+    images = len([item for item in media_root.rglob("*") if item.is_file()]) \
+        if media_root.is_dir() else 0
+    # restored — только MathType-текст; формулы Word (OMML) конвейер сохраняет как есть,
+    # поэтому без отдельного счётчика «формул восстановлено — 0» вводило в заблуждение
+    omml = count_omml_formulas(source)
+    note = "DOCX: формул Word (OMML) — %d; MathType-формул восстановлено — %d" % (
+        omml, restored)
     if images:
-        note += ", картинок — %d (папка %s)" % (images, media_dir)
+        note += "; картинок — %d (папка %s)" % (images, media_dir)
     result.notes.append(note)
 
 
@@ -1690,7 +1707,7 @@ def main(argv: list[str]) -> int:
     if not arguments or arguments[0] in ("-h", "--help"):
         print(__doc__)
         program = Path(sys.argv[0]).name or "convert.py"
-        print("Использование: py -3 %s [--formats pdf,docx] [--check] файл.md [файл.tex ...]"
+        print("Использование: C:\\Tools\\Scripts\\Python314\\python.exe %s [--formats pdf,docx] [--check] файл.md [файл.tex ...]"
               % program)
         print("Форматы по умолчанию: %s" % ", ".join(DEFAULT_FORMATS))
         return 0

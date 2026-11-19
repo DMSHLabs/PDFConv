@@ -1,8 +1,8 @@
 """Окно-конвертер: перетащите файлы .md или .tex — рядом появятся PDF.
 
-Запуск без консоли:  pyw -3 pdfconv.pyw
-Запуск с файлами:    pyw -3 pdfconv.pyw отчёт.md статья.tex
-Проверка окружения:  py -3 convert.py --check
+Запуск без консоли:  C:\\Tools\\Scripts\\Python314\\pythonw.exe pdfconv.pyw
+Запуск с файлами:    C:\\Tools\\Scripts\\Python314\\pythonw.exe pdfconv.pyw отчёт.md статья.tex
+Проверка окружения:  C:\\Tools\\Scripts\\Python314\\python.exe convert.py --check
 """
 from __future__ import annotations
 

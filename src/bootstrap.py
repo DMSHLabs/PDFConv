@@ -1,6 +1,6 @@
 """Подготовить проект на новой машине: зависимости и проверка состава.
 
-Запуск: py -3.14 src\\bootstrap.py [--install]
+Запуск: C:\\Tools\\Scripts\\Python314\\python.exe src\\bootstrap.py [--install]
   без --install  — только проверка и подсказки, ничего не меняет;
   с --install    — ставит недостающие python-зависимости в lib\\ тем же
                    интерпретатором, которым запущен скрипт (так колёса
@@ -108,9 +108,9 @@ def main(argv: list[str]) -> int:
 
     if problems:
         print("Итог: не хватает %d компонент(ов) — читайте подсказки выше." % problems)
-        print("После установки: py -3.14 src\\bootstrap.py  (снова проверить)")
+        print("После установки: C:\\Tools\\Scripts\\Python314\\python.exe src\\bootstrap.py  (снова проверить)")
         return 1
-    print("Итог: всё на месте. Дальше: py -3.14 src\\selfcheck.py, затем pdfconv.cmd")
+    print("Итог: всё на месте. Дальше: C:\\Tools\\Scripts\\Python314\\python.exe src\\selfcheck.py, затем pdfconv.cmd")
     return 0
 
 
