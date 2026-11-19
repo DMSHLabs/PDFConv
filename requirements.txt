@@ -1,0 +1,9 @@
+# Python-зависимости приложения. Ставить в lib/, а не в глобальный Python:
+#   py -3 -m pip install --target lib -r requirements.txt
+# (или: py -3 src\bootstrap.py --install — тот же эффект с проверкой)
+# Версии — те, на которых проект проверен; конвейер работает и без pymupdf
+# (тогда проверка PDF идёт через pdfminer/pypdf).
+tkinterdnd2==0.6.3
+pymupdf==1.28.2
+pdfminer.six==20260107
+pypdf==7.1.1

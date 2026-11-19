@@ -1,0 +1,30 @@
+# Vendored pandoc build and pip-installed helpers: large, re-downloadable, not ours to
+# version. Restore commands live in README.md.
+/bin/
+/lib/
+__pycache__/
+*.pyc
+
+# Generated results and local scratch
+*.pdf
+*.docx
+
+# Local window settings (chosen folders), not part of the project
+/pdfconv.json
+
+# Built standalone exe and PyInstaller work files
+/PDFConv.exe
+/build/
+/*.spec
+
+# ZCode workspace data (plans, local settings), created if the project is opened as a workspace
+/.zcode/
+
+# Scratch and harness data that live in the working folder but are not part of the project
+/_work/
+/.zcode-share/
+
+# Generated MathType translator: derivative of Design Science's LaTeX.tdl, whose licence
+# allows derivatives "solely for use with MathType" — do not publish. Regenerate locally:
+#   py -3.14 src\make_mathtype_translator.py
+/res/*.tdl
