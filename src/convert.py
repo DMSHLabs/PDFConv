@@ -104,7 +104,6 @@ BENIGN_WARNINGS = (
     "Token not allowed in a PDF string",
     "fontenc already loaded",
     "Unused \\captionsetup",
-    "Unused \\captionsetup",
     "Rerun to get",
     "Marginpar on page",
     "float specifier changed",
@@ -586,6 +585,19 @@ def copy_log_beside(output_pdf: Path, log_path: Path) -> str:
     return str(target)
 
 
+def log_has_issues(log_path: Path) -> bool:
+    """Были ли в журнале предупреждения: Warning, крупный Overfull или потерянные глифы."""
+    if not log_path.exists():
+        return False
+    log = log_path.read_text(encoding="utf-8", errors="replace")
+    if re.search(r"^(?:LaTeX|Package \S+|Class \S+) Warning:", log, re.M):
+        return True
+    if "Missing character" in log:
+        return True
+    return any(float(value) > 20 for value in
+               re.findall(r"Overfull \\hbox \(([\d.]+)pt too wide\)", log))
+
+
 def log_tail(log_path: Path, lines: int = 3) -> str:
     """Самая полезная часть журнала: строки ошибок LaTeX, иначе последние осмысленные."""
     if not log_path.exists():
@@ -893,13 +905,16 @@ def parse_log(log_path: Path, result: Result) -> None:
             "в шрифте нет глифов: %s%s — поставьте шрифт с этими символами или замените текст"
             % (shown, " и др." if len(missing_chars) > 5 else ""))
 
-    latex_warnings, benign = [], 0
+    latex_warnings, benign_types, benign_count = [], [], 0
     for match in re.finditer(r"^(?:LaTeX|Package \S+|Class \S+) Warning: (.+)$", log, re.M):
         message = " ".join(match.group(1).split())
         if "Label(s) may have changed" in message or not re.search(r"\w", message):
             continue  # уходит после повторного прохода latexmk / строка-разделитель
-        if any(pattern in message for pattern in BENIGN_WARNINGS):
-            benign += 1
+        benign = next((pattern for pattern in BENIGN_WARNINGS if pattern in message), None)
+        if benign is not None:
+            benign_count += 1
+            if benign not in benign_types:
+                benign_types.append(benign)
             continue
         latex_warnings.append(message)
     for message in latex_warnings[:3]:
@@ -907,9 +922,12 @@ def parse_log(log_path: Path, result: Result) -> None:
     if len(latex_warnings) > 3:
         result.notes.append("ещё %d предупреждений LaTeX в журнале сборки"
                             % (len(latex_warnings) - 3))
-    if benign:
-        result.notes.append("%d технических предупреждений LaTeX (на результат не влияют)"
-                            % benign)
+    if benign_count:
+        shown = "; ".join(benign_types[:3])
+        if len(benign_types) > 3:
+            shown += "; …"
+        result.notes.append("%d технических предупреждений LaTeX: %s"
+                            % (benign_count, shown))
 
 
 def verify_pdf(pdf_path: Path, source_text: str, result: Result) -> None:
@@ -1010,6 +1028,7 @@ def build_latex(text: str, output_pdf: Path, work_dir: Path, result: Result,
                 result.notes.append("в формулах внутри строки разрешены переносы после запятых")
 
     produced = work_dir / "main.pdf"
+    saved_log = ""
     if not produced.exists():
         # Без самой ошибки в отчёте разбираться не с чем, поэтому показываем её и оставляем
         # журнал рядом с исходником: временный каталог всё равно удаляется.
@@ -1027,11 +1046,17 @@ def build_latex(text: str, output_pdf: Path, work_dir: Path, result: Result,
         try:
             shutil.copyfile(produced, output_pdf)
             result.pdf = output_pdf
+            # Сборка успешна, но в журнале были предупреждения — сохраняем журнал рядом
+            # с PDF, иначе разобраться в них потом будет нечем.
+            if log_has_issues(log_path):
+                saved_log = copy_log_beside(output_pdf, log_path)
         except OSError:
             result.errors.append(
                 "не удалось записать %s: файл занят другой программой (открыт в "
                 "просмотрщике?) — закройте его и повторите" % output_pdf.name)
     parse_log(log_path, result)
+    if saved_log:
+        result.notes.append("полный журнал LaTeX: %s" % saved_log)
     if severe_overfull(log_path):
         result.notes.append(
             "подсказка: если за поле выходит таблица, оберните её в "

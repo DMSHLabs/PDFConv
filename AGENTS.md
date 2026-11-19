@@ -80,7 +80,9 @@ Microsoft YaHei). Perl для `latexmk` (с MiKTeX 26.5 `latexmk` — это Per
   без перетаскивания и проверки PDF), **абсолютные пути** к иконке и скрипту (с `--specpath`
   относительные считаются от каталога `build`, и сборка падает, оставив битый exe) и
   `--exclude-module pyarrow/numpy/pandas/PIL` (иначе `--collect-all pymupdf` затягивает
-  необязательные зависимости из глобального Python, если они там стоят: 85 МБ вместо 32).
+  необязательные зависимости из глобального Python, если они там стоят: 85 МБ вместо 32),
+  а также pdfminer/pypdf/cryptography/cffi/charset-normalizer/pycparser (иначе в exe попадают
+  новые бэкенды проверки PDF и его размер растёт до ~44 МБ).
   Версию PyInstaller не менять без причины; сборка воспроизводится `src\build-exe.cmd`.
 - **Тексты для пользователя — на русском**, имена в коде — английские. Комментарии только
   там, где неочевидна причина («почему», а не «что»).
@@ -181,3 +183,6 @@ Microsoft YaHei). Perl для `latexmk` (с MiKTeX 26.5 `latexmk` — это Per
 - Windows + MiKTeX: дочерним процессам нужен PATH с каталогом MiKTeX, а лучше —
   абсолютные пути к `latexmk`; вывод MiKTeX приходит в cp1251, поэтому
   `subprocess.run(..., text=True, errors="replace")`.
+- **`.cmd`-файлы — только cp866 (или ASCII) и CRLF.** UTF-8 с LF cmd не парсит: строки
+  «слипаются», и получаются ошибки вида «'...' is not recognized as an internal or external
+  command». Редакторы могут показывать cp866 как кракозябры — это нормально для `.cmd`.

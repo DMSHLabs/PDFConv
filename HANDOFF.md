@@ -3,6 +3,27 @@
 Короткая записка для следующей сессии: что сделано, что проверено, что осталось.
 Читать вместе с `AGENTS.md` (правила) и `README.md` (описание для пользователя).
 
+## Одиннадцатый заход: R2 — типы benign, .latex.log на успехе, пересборка exe (2026-11-19)
+
+По заданию lead-агента (`dsh-pdfconv_Priv/notes/pending/pdfconv-hardening-2026-11-19.md`):
+
+- `parse_log`: benign-предупреждения сводятся в примечание с типами
+  (`N технических предупреждений LaTeX: <тип1>; …`, до 3 типов + «…»); дубль
+  «Unused \captionsetup» в `BENIGN_WARNINGS` убран.
+- Успешная сборка с предупреждениями: `log_has_issues()` → журнал копируется рядом с PDF
+  как `<pdf>.latex.log` (+ примечание «полный журнал LaTeX: …»); на сборке без единого
+  Warning/Overfull/Missing файл не создаётся. Статусы/warnings/errors не менялись.
+- Проверено: `caption_test.md` → «2 технических предупреждений LaTeX: Unknown CJK family»,
+  лог рядом; подписи в PDF «Рис. 1: Рис. 7.» / «Рис. 2:» (R3). Реальный отчёт lognormal-cos:
+  10 стр., 4 изображения, 6693 кириллических символа, 403 формулы Word, 4 таблицы, без ошибок.
+- `PDFConv.exe` **пересобран** (бэкап в `dsh-pdfconv_Priv/backup`), 33,96 МБ; проверен в пустой
+  папке по AGENTS п.6: все проверки зелёные, pandoc из `bin\` рядом, R2 в exe работает.
+- Починены `.cmd`-файлы: `build-exe.cmd`/`pdfconv.cmd`/`bootstrap.cmd` были в UTF-8 с LF,
+  и cmd их не парсил («... is not recognized»); переписаны в cp866 + CRLF.
+- `build-exe.cmd`: добавлены `--exclude-module` для pdfminer/pypdf/cryptography/cffi/
+  charset-normalizer/pycparser — иначе PyInstaller затягивал новые бэкенды и exe раздувался
+  до 44 МБ; с исключениями — 33,96 МБ.
+
 ## Десятый заход: лицензия GPL-3.0-or-later и первый коммит (2026-11-19)
 
 После разбора лицензий выбрана **GNU GPL v3 или более поздняя**. Сделано:

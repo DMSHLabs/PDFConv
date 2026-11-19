@@ -1,3 +1,3 @@
 @echo off
-rem –ü–æ–¥–≥–æ—Ç–æ–≤–∫–∞ –Ω–∞ –Ω–æ–≤–æ–π –º–∞—à–∏–Ω–µ: py -3 src\bootstrap.py [--install]
+rem èÆ§£Æ‚Æ¢™† ≠† ≠Æ¢Æ© ¨†Ë®≠•: py -3 src\bootstrap.py [--install]
 py -3 "%~dp0bootstrap.py" %*
